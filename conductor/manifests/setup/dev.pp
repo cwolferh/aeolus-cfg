@@ -23,10 +23,15 @@ class conductor::setup::dev {
     require => Exec["bundle install"]
   }
 
-  exec { "create admin":
+  exec { "setup database":
     cwd => "/tmp/conductor/src",
-    command => "/usr/bin/bundle exec 'rake dc:create_admin_user'",
+    command => "/usr/bin/bundle exec rake db:setup",
     require => Exec["migrate database"]
   }
 
+  exec { "create admin":
+    cwd => "/tmp/conductor/src",
+    command => "/usr/bin/bundle exec 'rake dc:create_admin_user'",
+    require => Exec["setup database"]
+  }
 }
