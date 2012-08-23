@@ -13,6 +13,6 @@ class conductor::install::dev {
   exec { "update submodule":
     cwd => "/tmp/conductor",
     command => "/usr/bin/git submodule update",
-    requier => Exec["init submodule"]
+    require => Exec["init submodule"]
   }  
 }
