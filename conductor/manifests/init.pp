@@ -3,7 +3,7 @@ class conductor ($dev = false) {
     include conductor::install::dev
     include conductor::config::dev
     include conductor::setup::dev
-    #include conductor::run::dev
+    include conductor::run::dev
   } else {
     include conductor::install
   }
