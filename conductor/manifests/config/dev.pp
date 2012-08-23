@@ -3,6 +3,6 @@ class conductor::config::dev {
 
   exec { "use sqlite":
     cwd => "/tmp/conductor/src",
-    command => "sed -i s/'pg'/'sqlite3'/ Gemfile"
+    command => "/usr/bin/sed -i s/'pg'/'sqlite3'/ Gemfile"
   }
 }
