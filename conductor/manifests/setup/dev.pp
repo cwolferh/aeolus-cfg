@@ -5,5 +5,6 @@ class conductor::setup::dev {
   exec { "bundle install":
     cwd => "/tmp/conductor/src",
     command => "/usr/bin/bundle install --path bundle",
+    logoutput => on_failure
   }
 }
