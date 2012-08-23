@@ -4,7 +4,8 @@ class conductor::setup::dev {
 
   $dependencies = [
                    "libxml2-devel", #nokogiri
-                   "libxslt-devel"  #nokogiri
+                   "libxslt-devel", #nokogiri
+                   "sqlite-devel"   #sqlite3
                   ]
   
   package { $dependencies: }
