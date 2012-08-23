@@ -19,7 +19,7 @@ class conductor::setup::dev {
 
   exec { "migrate database":
     cwd => "/tmp/conductor/src",
-    command => "/usr/bin/rake db:migrate",
+    command => "/usr/bin/bundle exec rake db:migrate",
     require => Exec["bundle install"]
   }
 }
