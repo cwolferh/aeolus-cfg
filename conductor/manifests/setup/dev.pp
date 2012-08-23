@@ -16,4 +16,10 @@ class conductor::setup::dev {
     logoutput => on_failure,
     require => Package[$dependencies]
   }
+
+  exec { "migrate database":
+    cwd => "/tmp/conductor/src",
+    command => "/usr/bin/rake db:migrate",
+    require => Exec["bundle install"]
+  }
 }
