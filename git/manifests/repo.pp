@@ -1,7 +1,7 @@
 define git::repo (
   $src = "",
   $dst = "",
-  $branch = "master",
+  $branch = "master"
   ) {
 
   include git::install

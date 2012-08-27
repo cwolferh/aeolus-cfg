@@ -3,9 +3,10 @@ class conductor::setup::dev {
   require bundler
 
   $dependencies = [
+		   "libffi-devel",  #ffi  
                    "libxml2-devel", #nokogiri
                    "libxslt-devel", #nokogiri
-                   "sqlite-devel"   #sqlite3
+                   "sqlite-devel"  #sqlite3
                   ]
   
   package { $dependencies: }
@@ -33,5 +34,10 @@ class conductor::setup::dev {
     cwd => "/tmp/conductor/src",
     command => "/usr/bin/bundle exec 'rake dc:create_admin_user'",
     require => Exec["setup database"]
+  }
+  exec { "compass compile":
+    cwd => "/tmp/conductor/src",
+    command => "/usr/bin/bundle exec 'compass compile'",
+    require => Exec["bundle install"]
   }
 }
