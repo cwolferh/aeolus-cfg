@@ -1,7 +1,17 @@
 class bundler::install {
-  package { ["rubygem-bundler",
-             "ruby-devel",
+
+  package { ["ruby-devel",
              "gcc",
              "gcc-c++",
              "make"]: }
+
+  if  $lsbdistid == 'RedHatEnterpriseServer' and $lsbmajdistrelease == '6' {
+    package { ["rubygems"]: }
+    exec { "gem install bundler":
+         cwd => "/tmp",
+         command => "/usr/bin/gem install bundler",
+         require => Package["rubygems"] }
+  } else {
+    package { ["rubygem-bundler"]: }
+  }
 }
