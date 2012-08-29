@@ -1,7 +1,15 @@
 class conductor::install::dev {
+  if $conductor_branch != undef {
+     $branch = $conductor_branch
+  } else {
+     $branch = 'master'
+  }
+
+
   git::repo { conductor:
     src => 'git://github.com/aeolusproject',
-    dst => '/tmp'
+    dst => '/tmp',
+    branch => $branch
   }
 
   # converge-ui
