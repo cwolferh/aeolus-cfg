@@ -6,9 +6,14 @@ class aeolus-cli::install::dev {
      $branch = 'master'
   }
 
+  if $aeolus_cli_pull_request != undef {
+     $pull_request = $aeolus_cli_pull_request
+  }
+
   git::repo { aeolus-cli:
     src => 'git://github.com/aeolusproject',
     dst => '/tmp',
-    branch => $branch
+    branch => $branch,
+    pull_request => $pull_request
   }
 }

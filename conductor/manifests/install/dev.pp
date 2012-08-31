@@ -5,11 +5,15 @@ class conductor::install::dev {
      $branch = 'master'
   }
 
-
+  if $conductor_pull_request != undef {
+     $pull_request = $conductor_pull_request
+  }
+  
   git::repo { conductor:
     src => 'git://github.com/aeolusproject',
     dst => '/tmp',
-    branch => $branch
+    branch => $branch,
+    pull_request => $pull_request
   }
 
   # converge-ui

@@ -5,9 +5,14 @@ class aeolus-image-rubygem::install::dev {
      $branch = 'master'
   }
 
+  if $aeolus_image_rubygem_pull_request != undef {
+     $pull_request = $aeolus_image_rubygem_pull_request
+  }
+
   git::repo { aeolus-image-rubygem:
     src => 'git://github.com/aeolusproject',
     dst => '/tmp',
-    branch => $branch
+    branch => $branch,
+    pull_request => $pull_request
   }
 }
