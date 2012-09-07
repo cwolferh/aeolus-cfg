@@ -20,7 +20,9 @@ class conductor::setup::dev {
 
   exec { "install local aeolus-image-rubygem":
     cwd => "/tmp/conductor/src",
-    command => "/usr/bin/gem install --install-dir /tmp/conductor/src/bundle/ruby/1* /tmp/aeolus-image-rubygem/*.gem",
+    # the --no-ri and --no-doc are to avoid an
+    # "unrecognized option `--encoding'" error on rhel6 or fc16
+    command => "/usr/bin/gem install --no-ri --no-rdoc --install-dir /tmp/conductor/src/bundle/ruby/1* /tmp/aeolus-image-rubygem/*.gem",
     logoutput => on_failure,
     onlyif => "/bin/ls /tmp/aeolus-image-rubygem/*.gem",
     require => Exec["bundle install"]
