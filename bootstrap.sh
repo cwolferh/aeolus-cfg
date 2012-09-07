@@ -65,6 +65,22 @@ export FACTER_IWHD_URL=http://nec-em16.rhts.eng.bos.redhat.com:9090
 export FACTER_DELTACLOUD_URL=http://nec-em16.rhts.eng.bos.redhat.com:3002/api
 export FACTER_IMAGEFACTORY_URL=https://nec-em16.rhts.eng.bos.redhat.com:8075/imagefactory 
 
+# Optional environment variables (sample values are given below)
+#
+# Note that master is the default branch cloned from each of the three
+# projects if a _BRANCH is not specified.
+#
+# FACTER_AEOLUS_CLI_BRANCH=0.5.x
+# FACTER_AEOLUS_IMAGE_RUBYGEM_BRANCH=0.3-maint
+# FACTER_CONDUCTOR_BRANCH=0.10.x
+#
+# Pull requests must be integers
+#
+# FACTER_AEOLUS_CLI_PULL_REQUEST=6
+# FACTER_AEOLUS_IMAGE_RUBYGEM_PULL_REQUEST=7
+# FACTER_CONDUCTOR_PULL_REQUEST=47
+#
+
 git clone https://github.com/cwolferh/aeolus-cfg.git
 cd aeolus-cfg/
 puppet apply -d --modulepath=. test.pp
