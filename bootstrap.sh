@@ -5,7 +5,7 @@
 # imagefactory/iwhd/deltacloud by setting env variables and
 # oauth.json, below.  Startup conductor on port 3000
 
-if `netstat -tulpn | grep -q -P ':3000\s'`; then
+if `netstat -tlpn | grep -q -P ':3000\s'`; then
     echo "A process is already listening on port 3000.  Aborting"
     exit 1
 fi
