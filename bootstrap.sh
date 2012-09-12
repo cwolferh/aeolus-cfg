@@ -52,6 +52,7 @@ failovermethod=priority
 enabled=1
 gpgcheck=0' > /tmp/epel.repo
     yum -y -c /tmp/epel.repo install puppet
+    yum -y install ruby-devel
     gem install json
 else
     yum -y install puppet
@@ -64,6 +65,10 @@ echo -n '{"factory":{"consumer_key":"B+mSIxE9ybAJTBmyxtCliasV4k4ZyWfv","consumer
 export FACTER_IWHD_URL=http://nec-em16.rhts.eng.bos.redhat.com:9090
 export FACTER_DELTACLOUD_URL=http://nec-em16.rhts.eng.bos.redhat.com:3002/api
 export FACTER_IMAGEFACTORY_URL=https://nec-em16.rhts.eng.bos.redhat.com:8075/imagefactory 
+
+# user that checks out the repos, etc.
+export DEV_USERNAME=test
+export WORKDIR=/tmp/$DEV_USERNAME
 
 # Optional environment variables (sample values are given below)
 #
@@ -80,13 +85,15 @@ export FACTER_IMAGEFACTORY_URL=https://nec-em16.rhts.eng.bos.redhat.com:8075/ima
 # FACTER_AEOLUS_IMAGE_RUBYGEM_PULL_REQUEST=7
 # FACTER_CONDUCTOR_PULL_REQUEST=47
 #
-
+mkdir -p $WORKDIR
+cd $WORKDIR
 git clone https://github.com/cwolferh/aeolus-cfg.git
-cd aeolus-cfg/
+cd aeolus-cfg
+chown -R $DEV_USERNAME $WORKDIR
 
 # First run as root to install needed dependencies
 puppet apply -d --modulepath=. test.pp
 
 # Run same command as a non-root user (e.g., test) to install repos,
 # configure and start up conductor
-su test -c "puppet apply -d --modulepath=. test.pp"
+su $DEV_USERNAME -c "puppet apply -d --modulepath=. test.pp"
