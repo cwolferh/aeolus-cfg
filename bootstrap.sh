@@ -43,7 +43,7 @@ if [ "$os" == "fc16" ]; then
 fi
 
 if [ "$os" == "rhel6" ]; then
-    yum -y install gem rubygems
+    yum -y install rubygems
     echo '[epel]
 name=Extra Packages for Enterprise Linux 6 - $basearch
 #baseurl=http://download.fedoraproject.org/pub/epel/6/$basearch
@@ -51,8 +51,8 @@ mirrorlist=https://mirrors.fedoraproject.org/metalink?repo=epel-6&arch=$basearch
 failovermethod=priority
 enabled=1
 gpgcheck=0' > /tmp/epel.repo
-    gem install json
     yum -y -c /tmp/epel.repo install puppet
+    gem install json
 else
     yum -y install puppet
 fi
@@ -81,6 +81,12 @@ export FACTER_IMAGEFACTORY_URL=https://nec-em16.rhts.eng.bos.redhat.com:8075/ima
 # FACTER_CONDUCTOR_PULL_REQUEST=47
 #
 
-git clone https://github.com/cwolferh/aeolus-cfg.git
-cd aeolus-cfg/
+#git clone https://github.com/cwolferh/aeolus-cfg.git
+#cd aeolus-cfg/
+
+# First run as root to install needed dependencies
 puppet apply -d --modulepath=. test.pp
+
+# Run same command as a non-root user (e.g., test) to install repos,
+# configure and start up conductor
+su test -c "puppet apply -d --modulepath=. test.pp"
