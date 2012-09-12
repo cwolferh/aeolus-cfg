@@ -17,57 +17,83 @@ if [ -e /tmp/conductor ] || [ -e /tmp/aeolus-image-rubygem ] || \
     exit 1
 fi
 
-
 os=unsupported
-if `grep -qs 'Red Hat Enterprise Linux Server release 6' /etc/redhat-release`; then
-  os=rhel6
+if `grep -Eqs 'Red Hat Enterprise Linux Server release 6|CentOS release 6' /etc/redhat-release`; then
+  os=el6
 fi
 
 if `grep -qs -P 'Fedora release 16' /etc/fedora-release`; then
-  os=fc16
+  os=f16
 fi
 
 if `grep -qs -P 'Fedora release 17' /etc/fedora-release`; then
-  os=fc17
+  os=f17
 fi
 
-if [ "$os" == "unsupported" ]; then
-    echo This script has not been tested outside of RHEL6, FC16 and FC17.
-    echo You will need to install development libraries and set up
-    echo postgres manually.
-    exit 1
+if [ "$os" = "unsupported" ]; then
+    echo This script has not been tested outside of EL6, Fedora 16
+    echo and Fedora 17. You will need to install development
+    echo libraries and set up postgres manually.
+    echo
+    echo Press Control-C to quit, or ENTER to continue
+    read waiting
 fi
 
-if [ "$os" == "fc16" ]; then
-    yum -y install rubygem-json
+# Check if gcc rpm is installed
+if ! `rpm -q --quiet gcc`; then
+    yum install -y gcc
 fi
 
-if [ "$os" == "rhel6" ]; then
-    yum -y install rubygems
-    echo '[epel]
-name=Extra Packages for Enterprise Linux 6 - $basearch
-#baseurl=http://download.fedoraproject.org/pub/epel/6/$basearch
-mirrorlist=https://mirrors.fedoraproject.org/metalink?repo=epel-6&arch=$basearch
-failovermethod=priority
-enabled=1
-gpgcheck=0' > /tmp/epel.repo
-    yum -y -c /tmp/epel.repo install puppet
-    yum -y install ruby-devel
+# Check if make rpm is installed
+if ! `rpm -q --quiet make`; then
+    yum install -y make
+fi
+
+# Check if git rpm is installed
+if ! `rpm -q --quiet git`; then
+    yum install -y git
+fi
+
+# Check if rubygems rpm is installed
+if ! `rpm -q --quiet rubygems`; then
+    yum install -y rubygems
+fi
+
+# Check if ruby-devel rpm is installed
+if ! `rpm -q --quiet ruby-devel`; then
+    yum install -y ruby-devel
+fi
+
+# Install the json and puppet gems if they're not already installed
+if [ `gem list -i json` = "false" ]; then
+    echo Installing json gem
     gem install json
-else
-    yum -y install puppet
+fi
+if [ `gem list -i puppet` = "false" ]; then
+    echo Installing puppet gem
+    gem install puppet
 fi
 
-mkdir /etc/aeolus-conductor
+# Set default Deltacloud, ImageFactory, and Image Warehouse values
+# (for RH network) if they're not already in the environment
+if [ "x$FACTER_IWHD_URL" = "x" ]; then
+    export FACTER_IWHD_URL=http://nec-em16.rhts.eng.bos.redhat.com:9090
+fi
+if [ "x$FACTER_DELTACLOUD_URL" = "x" ]; then
+    export FACTER_DELTACLOUD_URL=http://nec-em16.rhts.eng.bos.redhat.com:3002/api
+fi
+if [ "x$FACTER_IMAGEFACTORY_URL" = "x" ]; then
+    export FACTER_IMAGEFACTORY_URL=https://nec-em16.rhts.eng.bos.redhat.com:8075/imagefactory
+fi
 
-# CONFIGURE YOUR SETTINGS FOR IWHD/IMAGEFACTORY/DELTACLOUD HERE
+# Create some default OAuth values
+mkdir -p /etc/aeolus-conductor
 echo -n '{"factory":{"consumer_key":"B+mSIxE9ybAJTBmyxtCliasV4k4ZyWfv","consumer_secret":"XdVkxAxZLbUgFGfTeqiNLymm6p81XNf+"},"iwhd":{"consumer_key":"Flu3PwQjeg8ypbT7uCeu9bMRJatzHfOc","consumer_secret":"ZUrjoj4RFK0/71L+NkXCqsYnUTzeQdGT"}}' > /etc/aeolus-conductor/oauth.json
-export FACTER_IWHD_URL=http://nec-em16.rhts.eng.bos.redhat.com:9090
-export FACTER_DELTACLOUD_URL=http://nec-em16.rhts.eng.bos.redhat.com:3002/api
-export FACTER_IMAGEFACTORY_URL=https://nec-em16.rhts.eng.bos.redhat.com:8075/imagefactory 
 
-# user that checks out the repos, etc.
-export DEV_USERNAME=test
+# Set the default user to check out repos with, if not requested
+if [ "x$DEV_USERNAME" = "x" ]; then
+  export DEV_USERNAME=test
+fi
 export WORKDIR=/tmp/$DEV_USERNAME
 
 # Optional environment variables (sample values are given below)
@@ -87,11 +113,14 @@ export WORKDIR=/tmp/$DEV_USERNAME
 #
 mkdir -p $WORKDIR
 cd $WORKDIR
+if [ -d aeolus-cfg ]; then
+ rm -rf aeolus-cfg
+fi
 git clone https://github.com/cwolferh/aeolus-cfg.git
-cd aeolus-cfg
 chown -R $DEV_USERNAME $WORKDIR
 
 # First run as root to install needed dependencies
+cd aeolus-cfg
 puppet apply -d --modulepath=. test.pp
 
 # Run same command as a non-root user (e.g., test) to install repos,
