@@ -11,7 +11,7 @@ class aeolus-image-rubygem::install::dev {
 
   git::repo { aeolus-image-rubygem:
     src => 'git://github.com/aeolusproject',
-    dst => '/tmp',
+    dst => "${aeolus_workdir}",
     branch => $branch,
     pull_request => $aeolus_image_rubygem_pull_request
   }

@@ -5,15 +5,29 @@
 # imagefactory/iwhd/deltacloud by setting env variables and
 # oauth.json, below.  Startup conductor on port 3000
 
+# Set the default user to check out repos with, if not requested
+if [ "x$DEV_USERNAME" = "x" ]; then
+  export DEV_USERNAME=test
+fi
+
+# Where the aeolus projects (conductor, aeolus-cli and aeolus-image-rubygem)
+# get checked out to
+if [ "x$FACTER_AEOLUS_WORKDIR" = "x" ]; then
+    export FACTER_AEOLUS_WORKDIR=/tmp/$DEV_USERNAME
+fi
+
+# Where aeolus-cfg gets checked out to
+export WORKDIR=$FACTER_AEOLUS_WORKDIR
+
 if `netstat -tlpn | grep -q -P ':3000\s'`; then
     echo "A process is already listening on port 3000.  Aborting"
     exit 1
 fi
 
-if [ -e /tmp/conductor ] || [ -e /tmp/aeolus-image-rubygem ] || \
-    [ -e /tmp/aeolus-cli ]; then
-    echo -n "Already existing directories, one of /tmp/conductor, "
-    echo "/tmp/aeolus-image-rubygem or /tmp/aeolus-cli.  Aborting"
+if [ -e $FACTER_AEOLUS_WORKDIR/conductor ] || [ -e $FACTER_AEOLUS_WORKDIR/aeolus-image-rubygem ] || \
+    [ -e $FACTER_AEOLUS_WORKDIR/aeolus-cli ]; then
+    echo -n "Already existing directories, one of $FACTER_AEOLUS_WORKDIR/conductor, "
+    echo "$FACTER_AEOLUS_WORKDIR/aeolus-image-rubygem or $FACTER_AEOLUS_WORKDIR/aeolus-cli.  Aborting"
     exit 1
 fi
 
@@ -90,12 +104,6 @@ fi
 mkdir -p /etc/aeolus-conductor
 echo -n '{"factory":{"consumer_key":"B+mSIxE9ybAJTBmyxtCliasV4k4ZyWfv","consumer_secret":"XdVkxAxZLbUgFGfTeqiNLymm6p81XNf+"},"iwhd":{"consumer_key":"Flu3PwQjeg8ypbT7uCeu9bMRJatzHfOc","consumer_secret":"ZUrjoj4RFK0/71L+NkXCqsYnUTzeQdGT"}}' > /etc/aeolus-conductor/oauth.json
 
-# Set the default user to check out repos with, if not requested
-if [ "x$DEV_USERNAME" = "x" ]; then
-  export DEV_USERNAME=test
-fi
-export WORKDIR=/tmp/$DEV_USERNAME
-
 # Optional environment variables (sample values are given below)
 #
 # Note that master is the default branch cloned from each of the three
@@ -116,8 +124,8 @@ cd $WORKDIR
 if [ -d aeolus-cfg ]; then
  rm -rf aeolus-cfg
 fi
-git clone https://github.com/cwolferh/aeolus-cfg.git
-chown -R $DEV_USERNAME $WORKDIR
+chown $DEV_USERNAME $WORKDIR
+su $DEV_USERNAME -c "git clone https://github.com/cwolferh/aeolus-cfg.git"
 
 # First run as root to install needed dependencies
 cd aeolus-cfg

@@ -2,8 +2,10 @@ class conductor::setup::dev {
   require conductor::config::dev
   require conductor::setup::dev_depend
 
+  notify { "CCW SETUP $aeolus_workdir": }
+
   exec { "bundle install":
-    cwd => "/tmp/conductor/src",
+    cwd => "${aeolus_workdir}/conductor/src",
     command => "/usr/bin/bundle install --path bundle",
     logoutput => on_failure,
     # 15 minute timeout because this can take awhile sometimes
@@ -11,34 +13,34 @@ class conductor::setup::dev {
   }
 
   exec { "install local aeolus-image-rubygem":
-    cwd => "/tmp/conductor/src",
+    cwd => "${aeolus_workdir}/conductor/src",
     # the --no-ri and --no-doc are to avoid an
     # "unrecognized option `--encoding'" error on rhel6 or fc16
-    command => "/usr/bin/gem install --no-ri --no-rdoc --install-dir /tmp/conductor/src/bundle/ruby/1* /tmp/aeolus-image-rubygem/*.gem",
+    command => "/usr/bin/gem install --no-ri --no-rdoc --install-dir ${aeolus_workdir}/conductor/src/bundle/ruby/1* ${aeolus_workdir}/aeolus-image-rubygem/*.gem",
     logoutput => on_failure,
-    onlyif => "/bin/ls /tmp/aeolus-image-rubygem/*.gem",
+    onlyif => "/bin/ls ${aeolus_workdir}/aeolus-image-rubygem/*.gem",
     require => Exec["bundle install"]
   }
 
   exec { "migrate database":
-    cwd => "/tmp/conductor/src",
+    cwd => "${aeolus_workdir}/conductor/src",
     command => "/usr/bin/bundle exec rake db:migrate",
     require => Exec["install local aeolus-image-rubygem"]
   }
 
   exec { "setup database":
-    cwd => "/tmp/conductor/src",
+    cwd => "${aeolus_workdir}/conductor/src",
     command => "/usr/bin/bundle exec rake db:setup",
     require => Exec["migrate database"]
   }
 
   exec { "create admin":
-    cwd => "/tmp/conductor/src",
+    cwd => "${aeolus_workdir}/conductor/src",
     command => "/usr/bin/bundle exec 'rake dc:create_admin_user'",
     require => Exec["setup database"]
   }
   exec { "compass compile":
-    cwd => "/tmp/conductor/src",
+    cwd => "${aeolus_workdir}/conductor/src",
     command => "/usr/bin/bundle exec 'compass compile'",
     require => Exec["bundle install"]
   }

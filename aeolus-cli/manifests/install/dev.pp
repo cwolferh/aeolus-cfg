@@ -11,7 +11,7 @@ class aeolus-cli::install::dev {
 
   git::repo { aeolus-cli:
     src => 'git://github.com/aeolusproject',
-    dst => '/tmp',
+    dst => "${aeolus_workdir}",
     branch => $branch,
     pull_request => $aeolus_cli_pull_request
   }

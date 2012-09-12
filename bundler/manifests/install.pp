@@ -8,7 +8,7 @@ class bundler::install {
   if  $lsbdistid == 'RedHatEnterpriseServer' and $lsbmajdistrelease == '6' {
     package { ["rubygems"]: }
     exec { "gem install bundler":
-         cwd => "/tmp",
+         cwd => "${aeolus_workdir}",
          command => "/usr/bin/gem install bundler",
          require => Package["rubygems"],
 	 unless =>  "/usr/bin/gem list bundler | grep -q bundler" }
