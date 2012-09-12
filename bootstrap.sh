@@ -81,8 +81,8 @@ export FACTER_IMAGEFACTORY_URL=https://nec-em16.rhts.eng.bos.redhat.com:8075/ima
 # FACTER_CONDUCTOR_PULL_REQUEST=47
 #
 
-#git clone https://github.com/cwolferh/aeolus-cfg.git
-#cd aeolus-cfg/
+git clone https://github.com/cwolferh/aeolus-cfg.git
+cd aeolus-cfg/
 
 # First run as root to install needed dependencies
 puppet apply -d --modulepath=. test.pp
