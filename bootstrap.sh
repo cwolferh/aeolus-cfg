@@ -9,6 +9,8 @@
 if [ "x$DEV_USERNAME" = "x" ]; then
   export DEV_USERNAME=test
 fi
+# Just in case the user doesn't already exist
+useradd $DEV_USERNAME 2>/dev/null
 
 # Where the aeolus projects (conductor, aeolus-cli and aeolus-image-rubygem)
 # get checked out to
