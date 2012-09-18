@@ -93,33 +93,33 @@ fi
 # Set default Deltacloud, ImageFactory, and Image Warehouse values
 # (for RH network) if they're not already in the environment
 if [ "x$FACTER_IWHD_URL" = "x" ]; then
-    export FACTER_IWHD_URL=http://nec-em16.rhts.eng.bos.redhat.com:9090
+    export FACTER_IWHD_URL=http://hp-dl385g7-02.lab.eng.brq.redhat.com:9090
 fi
 if [ "x$FACTER_DELTACLOUD_URL" = "x" ]; then
-    export FACTER_DELTACLOUD_URL=http://nec-em16.rhts.eng.bos.redhat.com:3002/api
+    export FACTER_DELTACLOUD_URL=http://hp-dl385g7-02.lab.eng.brq.redhat.com:3002/api
 fi
 if [ "x$FACTER_IMAGEFACTORY_URL" = "x" ]; then
-    export FACTER_IMAGEFACTORY_URL=https://nec-em16.rhts.eng.bos.redhat.com:8075/imagefactory
+    export FACTER_IMAGEFACTORY_URL=https://hp-dl385g7-02.lab.eng.brq.redhat.com:8075/imagefactory
 fi
 
 # Create some default OAuth values
 mkdir -p /etc/aeolus-conductor
-echo -n '{"factory":{"consumer_key":"B+mSIxE9ybAJTBmyxtCliasV4k4ZyWfv","consumer_secret":"XdVkxAxZLbUgFGfTeqiNLymm6p81XNf+"},"iwhd":{"consumer_key":"Flu3PwQjeg8ypbT7uCeu9bMRJatzHfOc","consumer_secret":"ZUrjoj4RFK0/71L+NkXCqsYnUTzeQdGT"}}' > /etc/aeolus-conductor/oauth.json
+echo -n '{"iwhd":{"consumer_key":"EyE3rhz99eXrAj69ePw8JWLofz3JPE+U","consumer_secret":"JIOTf4rdAX3sEK4l/Pa2b75Vxg6JGlvE"},"factory":{"consumer_key":"Tp3g9a9dTE3koCDV999OPWhiNuCvxw0Y","consumer_secret":"KTaHA+kyiZiMhwyVmJwdEiTvpsq5jSus"}}' > /etc/aeolus-conductor/oauth.json
 
 # Optional environment variables (sample values are given below)
 #
 # Note that master is the default branch cloned from each of the three
 # projects if a _BRANCH is not specified.
 #
-# FACTER_AEOLUS_CLI_BRANCH=0.5.x
-# FACTER_AEOLUS_IMAGE_RUBYGEM_BRANCH=0.3-maint
-# FACTER_CONDUCTOR_BRANCH=0.10.x
+# export FACTER_AEOLUS_CLI_BRANCH=0.5.x
+# export FACTER_AEOLUS_IMAGE_RUBYGEM_BRANCH=0.3-maint
+# export FACTER_CONDUCTOR_BRANCH=0.10.x
 #
 # Pull requests must be integers
 #
-# FACTER_AEOLUS_CLI_PULL_REQUEST=6
-# FACTER_AEOLUS_IMAGE_RUBYGEM_PULL_REQUEST=7
-# FACTER_CONDUCTOR_PULL_REQUEST=47
+# export FACTER_AEOLUS_CLI_PULL_REQUEST=6
+# export FACTER_AEOLUS_IMAGE_RUBYGEM_PULL_REQUEST=7
+# export FACTER_CONDUCTOR_PULL_REQUEST=47
 #
 mkdir -p $WORKDIR
 cd $WORKDIR
