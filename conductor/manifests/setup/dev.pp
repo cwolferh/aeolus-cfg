@@ -2,8 +2,6 @@ class conductor::setup::dev {
   require conductor::config::dev
   require conductor::setup::dev_depend
 
-  notify { "CCW SETUP $aeolus_workdir": }
-
   exec { "bundle install":
     cwd => "${aeolus_workdir}/conductor/src",
     command => "/usr/bin/bundle install --path bundle",
