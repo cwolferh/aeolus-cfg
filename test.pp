@@ -1,5 +1,8 @@
-
-Exec { path => [ "/bin/", "/sbin/" , "/usr/bin/", "/usr/sbin/" ] }
+if $rbenv_version == undef {
+  Exec { path => [ "/bin/", "/sbin/" , "/usr/bin/", "/usr/sbin/" ] }
+} else {
+  Exec { path => [ "~/.rbenv/bin", "~/.rbenv/shims", "/bin/", "/sbin/" , "/usr/bin/", "/usr/sbin/" ] }
+}
 
 # if not defined by facter
 if $aeolus_workdir == undef {

@@ -21,6 +21,11 @@ fi
 # Where aeolus-cfg gets checked out to
 export WORKDIR=$FACTER_AEOLUS_WORKDIR
 
+# If you want to use system ruby for the aeolus projects, do not
+# define this env var.  Otherwise, use (and install if necessary)
+# specified ruby version locally in ~/.rbenv for $DEV_USERNAME
+# export RBENV_VERSION=1.9.3-p194
+
 if `netstat -tlpn | grep -q -P ':3000\s'`; then
     echo "A process is already listening on port 3000.  Aborting"
     exit 1
@@ -128,6 +133,37 @@ if [ -d aeolus-cfg ]; then
 fi
 chown $DEV_USERNAME $WORKDIR
 su $DEV_USERNAME -c "git clone https://github.com/cwolferh/aeolus-cfg.git"
+
+if [ "x$RBENV_VERSION" != "x" ]; then
+  # install rbenv plus plugins rbenv-var, ruby-build, rbenv-installer
+  # this is a harmless op if already installed (TODO: don't bother downloading and running if already installed)
+  su $DEV_USERNAME -c "curl -L https://raw.github.com/fesplugas/rbenv-installer/master/bin/rbenv-installer | /bin/sh"
+  DEV_USERNAME_PATH_PREFIX="~/.rbenv/bin:~/.rbenv/shims"
+
+  # if this ruby version is not already installed in this user's rbenv, install it
+  su $DEV_USERNAME -l -c "export PATH=$DEV_USERNAME_PATH_PREFIX:\`echo \$PATH\`; rbenv versions" | grep -q $RBENV_VERSION
+  if [ $? -ne 0 ]; then
+    su $DEV_USERNAME -l -c "export PATH=$DEV_USERNAME_PATH_PREFIX:\`echo \$PATH\`; rbenv install $RBENV_VERSION"
+  fi
+
+  # bail if the ruby version doesn't seem to be installed
+  su $DEV_USERNAME -l -c "export PATH=$DEV_USERNAME_PATH_PREFIX:\`echo \$PATH\`; rbenv versions" | grep -q $RBENV_VERSION
+  if [ $? -ne 0 ]; then
+    echo was not able to "rbenv install $RBENV_VERSION".  Check ~$DEV_USERNAME/.rbenv
+    exit 1
+  fi
+
+  # install bundler
+  su $DEV_USERNAME -l -c "export PATH=$DEV_USERNAME_PATH_PREFIX:\`echo \$PATH\`; rbenv local $RBENV_VERSION"
+  su $DEV_USERNAME -l -c "export PATH=$DEV_USERNAME_PATH_PREFIX:\`echo \$PATH\`; rbenv rehash"
+  su $DEV_USERNAME -l -c "export PATH=$DEV_USERNAME_PATH_PREFIX:\`echo \$PATH\`; gem install bundler"
+  su $DEV_USERNAME -l -c "export PATH=$DEV_USERNAME_PATH_PREFIX:\`echo \$PATH\`; rbenv rehash"
+  su $DEV_USERNAME -l -c "export PATH=$DEV_USERNAME_PATH_PREFIX:\`echo \$PATH\`; rbenv local --unset"
+
+  export FACTER_RBENV_VERSION=$RBENV_VERSION
+
+fi
+
 
 # First run as root to install needed dependencies
 cd aeolus-cfg

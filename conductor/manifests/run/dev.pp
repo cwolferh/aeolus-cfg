@@ -3,8 +3,8 @@ class conductor::run::dev {
 
   exec { "conductor rails server":
     cwd => "${aeolus_workdir}/conductor/src",
-    #    command => '/usr/bin/bundle exec "rails server --daemon"',
-    command => '/usr/bin/bundle exec "rails server"&',
+    #    command => 'bundle exec "rails server --daemon"',
+    command => 'bundle exec "rails server"&',
     unless => '/usr/bin/curl http://0.0.0.0:3000/'
   }
 }
