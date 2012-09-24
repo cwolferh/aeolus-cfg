@@ -14,7 +14,7 @@ class conductor::setup::dev {
     cwd => "${aeolus_workdir}/conductor/src",
     # the --no-ri and --no-doc are to avoid an
     # "unrecognized option `--encoding'" error on rhel6 or fc16
-    command => "gem install --no-ri --no-rdoc --install-dir ${aeolus_workdir}/conductor/src/bundle/ruby/1* ${aeolus_workdir}/aeolus-image-rubygem/*.gem",
+    command => "gem install -f --no-ri --no-rdoc --install-dir ${aeolus_workdir}/conductor/src/bundle/ruby/1* ${aeolus_workdir}/aeolus-image-rubygem/*.gem",
     logoutput => on_failure,
     onlyif => "/bin/ls ${aeolus_workdir}/aeolus-image-rubygem/*.gem",
     require => Exec["bundle install"]
