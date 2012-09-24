@@ -21,13 +21,20 @@ fi
 # Where aeolus-cfg gets checked out to
 export WORKDIR=$FACTER_AEOLUS_WORKDIR
 
+# Where the aeolus projects (conductor, aeolus-cli and aeolus-image-rubygem)
+# get checked out to
+if [ "x$FACTER_CONDUCTOR_PORT" = "x" ]; then
+    export FACTER_CONDUCTOR_PORT=3000
+fi
+
+
 # If you want to use system ruby for the aeolus projects, do not
 # define this env var.  Otherwise, use (and install if necessary)
 # specified ruby version locally in ~/.rbenv for $DEV_USERNAME
 # export RBENV_VERSION=1.9.3-p194
 
-if `netstat -tlpn | grep -q -P ':3000\s'`; then
-    echo "A process is already listening on port 3000.  Aborting"
+if `netstat -tlpn | grep -q -P "\:$FACTER_CONDUCTOR_PORT\\s"`; then
+    echo "A process is already listening on port $FACTER_CONDUCTOR_PORT.  Aborting"
     exit 1
 fi
 
