@@ -12,14 +12,16 @@ fi
 # Just in case the user doesn't already exist
 useradd $DEV_USERNAME 2>/dev/null
 
+# Where aeolus-cfg gets checked out to
+if [ "x$WORKDIR" = "x" ]; then
+    export WORKDIR=/tmp/$DEV_USERNAME
+fi
+
 # Where the aeolus projects (conductor, aeolus-cli and aeolus-image-rubygem)
 # get checked out to
 if [ "x$FACTER_AEOLUS_WORKDIR" = "x" ]; then
-    export FACTER_AEOLUS_WORKDIR=/tmp/$DEV_USERNAME
+    export FACTER_AEOLUS_WORKDIR=$WORKDIR
 fi
-
-# Where aeolus-cfg gets checked out to
-export WORKDIR=$FACTER_AEOLUS_WORKDIR
 
 # Where the aeolus projects (conductor, aeolus-cli and aeolus-image-rubygem)
 # get checked out to
