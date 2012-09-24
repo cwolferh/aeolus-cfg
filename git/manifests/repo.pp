@@ -30,7 +30,7 @@ define git::repo (
     exec { "apply-pull-requeust-repo-${name}-${branch}-${pull}":
       cwd             => "$dst/$name",
       path            => "/usr/bin:/bin:/usr/local/bin",
-      command         => "curl ${https_src}/${name}/pull/${pull_request}.patch | git am",
+      command         => "curl ${https_src}/${name}/pull/${pull_request}.patch | patch -p1",
       require         => Exec["branch-repo-${name}-${branch}"],
     }
   }
