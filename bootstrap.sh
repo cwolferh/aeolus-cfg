@@ -135,11 +135,11 @@ echo -n '{"iwhd":{"consumer_key":"EyE3rhz99eXrAj69ePw8JWLofz3JPE+U","consumer_se
 #
 mkdir -p $WORKDIR
 cd $WORKDIR
-#if [ -d aeolus-cfg ]; then
-# rm -rf aeolus-cfg
-#fi
+if [ -d aeolus-cfg ]; then
+ rm -rf aeolus-cfg
+fi
 chown $DEV_USERNAME $WORKDIR
-#su $DEV_USERNAME -c "git clone https://github.com/cwolferh/aeolus-cfg.git"
+su $DEV_USERNAME -c "git clone https://github.com/cwolferh/aeolus-cfg.git"
 
 if [ "x$RBENV_VERSION" != "x" ]; then
   # install rbenv plus plugins rbenv-var, ruby-build, rbenv-installer
