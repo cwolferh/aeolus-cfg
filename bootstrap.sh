@@ -145,9 +145,9 @@ su $DEV_USERNAME -c "git clone https://github.com/cwolferh/aeolus-cfg.git"
 
 if [ "x$RBENV_VERSION" != "x" ]; then
 
-  # only used for "rbenv install" in the Fedora-17 / ruby 1.8.7 case
+  # only used for "rbenv install" in the Fedora-(16|17) / ruby 1.8.7 case
   if [ "xRBENV_INSTALL_CONFIGURE_OPTS" != "x" ]; then
-    if [ "$os" = "f17" ]; then
+    if [ "$os" = "f16" -o "$os" = "f17" ]; then
       if echo $RBENV_VERSION | grep -qs '^1.8.7-' ; then
         RBENV_INSTALL_CONFIGURE_OPTS=--without-dl
       fi
