@@ -144,6 +144,16 @@ chown $DEV_USERNAME $WORKDIR
 su $DEV_USERNAME -c "git clone https://github.com/cwolferh/aeolus-cfg.git"
 
 if [ "x$RBENV_VERSION" != "x" ]; then
+
+  # only used for "rbenv install" in the Fedora-17 / ruby 1.8.7 case
+  if [ "xRBENV_INSTALL_CONFIGURE_OPTS" != "x" ]; then
+    if [ "$os" = "f17" ]; then
+      if echo $RBENV_VERSION | grep -qs '^1.8.7-' ; then
+        RBENV_INSTALL_CONFIGURE_OPTS=--without-dl
+      fi
+    fi
+  fi
+
   # install rbenv plus plugins rbenv-var, ruby-build, rbenv-installer
   # this is a harmless op if already installed (TODO: don't bother downloading and running if already installed)
   su $DEV_USERNAME -c "curl -L https://raw.github.com/fesplugas/rbenv-installer/master/bin/rbenv-installer | /bin/sh"
@@ -152,7 +162,7 @@ if [ "x$RBENV_VERSION" != "x" ]; then
   # if this ruby version is not already installed in this user's rbenv, install it
   su $DEV_USERNAME -l -c "export PATH=$DEV_USERNAME_PATH_PREFIX:\`echo \$PATH\`; rbenv versions" | grep -q $RBENV_VERSION
   if [ $? -ne 0 ]; then
-    su $DEV_USERNAME -l -c "export PATH=$DEV_USERNAME_PATH_PREFIX:\`echo \$PATH\`; rbenv install $RBENV_VERSION"
+    su $DEV_USERNAME -l -c "export PATH=$DEV_USERNAME_PATH_PREFIX:\`echo \$PATH\`; CONFIGURE_OPTS=$RBENV_INSTALL_CONFIGURE_OPTS  rbenv install $RBENV_VERSION"
   fi
 
   # bail if the ruby version doesn't seem to be installed
