@@ -1,6 +1,9 @@
 aeolus-cfg
 ==========
 
+Deprecated.  Latest scripts are at https://github.com/aeolus-incubator/dev-tools
+================================================================================
+
 Next generation approach for installing Aeolus, using Puppet.
 
 As the root user on a box you want to install Aeolus on:
